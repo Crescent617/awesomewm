@@ -45,7 +45,7 @@ theme.fg_urgent = "#ffffff"
 theme.fg_minimize = "#ffffff"
 
 -- Window Gap Distance
-theme.useless_gap = dpi(15)
+theme.useless_gap = dpi(12)
 
 -- Show Gaps if Only One Client is Visible
 theme.gap_single_client = true
@@ -88,7 +88,6 @@ end
 -- opacity
 theme.notification_opacity = 0.9
 theme.notification_border_color = theme.border_marked
-
 
 -- System Tray
 theme.bg_systray = theme.bg_normal
@@ -155,6 +154,10 @@ local cpu = lain.widget.cpu {
     widget:set_markup(markup.fontfg(theme.font, "#f36a6e", "CPU " .. cpu_now.usage .. "% "))
   end,
 }
+
+local fs_widget = require "awesome-wm-widgets.fs-widget.fs-widget"
+
+local volume_widget = require "awesome-wm-widgets.volume-widget.volume"
 
 -- MEM
 local memory = lain.widget.mem {
@@ -229,9 +232,10 @@ function theme.at_screen_connect(s)
     { -- Right widgets
       layout = wibox.layout.fixed.horizontal,
       margin_box(wibox.widget.systray(), 2),
-      lr_margin_box(require "awesome-wm-widgets.volume-widget.volume"(), 10),
+      lr_margin_box(require "awesome-wm-widgets.volume-widget.volume"()),
       memory.widget,
       cpu.widget,
+      fs_widget(),
       mytextclock,
       require "awesome-wm-widgets.logout-menu-widget.logout-menu" {
         onlock = function()

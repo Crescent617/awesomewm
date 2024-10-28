@@ -86,7 +86,7 @@ local function run_once(cmd)
   end)
 end
 
-run_once "compton --vsync opengl-swc --backend glx"
+run_once "picom -b --log-file /tmp/picom.log --log-level warn"
 
 -- This function implements the XDG autostart specification
 awful.spawn.with_shell(
@@ -100,6 +100,9 @@ awful.spawn.with_shell(
 awful.spawn.with_shell "if [ -f ~/.Xmodmap ]; then xmodmap ~/.Xmodmap; fi"
 awful.spawn.with_shell "[ -f ~/scripts/auto_change_color_scheme.sh ] && sh ~/scripts/auto_change_color_scheme.sh"
 -- }}}
+
+-- Display
+awful.spawn.with_shell "sh ~/scripts/set_display.sh"
 
 -- {{{ Variable definitions
 local modkey = "Mod4"
