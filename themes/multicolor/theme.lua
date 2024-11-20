@@ -16,7 +16,7 @@ local os = os
 
 local theme = {}
 theme.confdir = os.getenv "HOME" .. "/.config/awesome/themes/multicolor"
-theme.wallpaper = os.getenv "MY_WALLPAPER" or theme.confdir .. "/wall.png"
+theme.wallpaper = os.getenv "MY_WALLPAPER" or theme.confdir .. "/wall.jpg"
 theme.font = "Monospace 11"
 
 local focus_fg = "#59e269"
@@ -151,7 +151,7 @@ theme.cal = lain.widget.cal {
 -- CPU
 local cpu = lain.widget.cpu {
   settings = function()
-    widget:set_markup(markup.fontfg(theme.font, "#f36a6e", "CPU " .. cpu_now.usage .. "% "))
+    widget:set_markup(markup.fontfg(theme.font, "#ffffff", "󰍛 " .. cpu_now.usage .. "% "))
   end,
 }
 
@@ -162,7 +162,7 @@ local volume_widget = require "awesome-wm-widgets.volume-widget.volume"
 -- MEM
 local memory = lain.widget.mem {
   settings = function()
-    widget:set_markup(markup.fontfg(theme.font, "#e0da37", "RAM " .. mem_now.perc .. "% "))
+    widget:set_markup(markup.fontfg(theme.font, "#ffffff", " " .. mem_now.perc .. "% "))
   end,
 }
 
@@ -232,10 +232,10 @@ function theme.at_screen_connect(s)
     { -- Right widgets
       layout = wibox.layout.fixed.horizontal,
       margin_box(wibox.widget.systray(), 2),
-      lr_margin_box(require "awesome-wm-widgets.volume-widget.volume"()),
+      lr_margin_box(volume_widget()),
       memory.widget,
       cpu.widget,
-      fs_widget(),
+      -- fs_widget(),
       mytextclock,
       require "awesome-wm-widgets.logout-menu-widget.logout-menu" {
         onlock = function()

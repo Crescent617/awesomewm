@@ -1,7 +1,6 @@
 --[[
      Awesome WM configuration template
      github.com/lcpz
-
 --]]
 
 -- {{{ Required libraries
@@ -97,12 +96,12 @@ awful.spawn.with_shell(
 )
 
 -- Change keymaps
-awful.spawn.with_shell "if [ -f ~/.Xmodmap ]; then xmodmap ~/.Xmodmap; fi"
+awful.spawn.with_shell "[ -f ~/.Xmodmap ] && xmodmap ~/.Xmodmap"
 awful.spawn.with_shell "[ -f ~/scripts/auto_change_color_scheme.sh ] && sh ~/scripts/auto_change_color_scheme.sh"
 -- }}}
 
 -- Display
-awful.spawn.with_shell "sh ~/scripts/set_display.sh"
+-- awful.spawn.with_shell "sh ~/scripts/set_display.sh"
 
 -- {{{ Variable definitions
 local modkey = "Mod4"
@@ -118,7 +117,7 @@ local launcher = "rofi -show drun"
 -- local launcher = "dmenu_run -i -fn Monospace -p 'Open '"
 
 awful.util.terminal = terminal
-awful.util.tagnames = { "1: ", "2:</>", "3: ", "4: ", "5:󰊠 " }
+awful.util.tagnames = { "1:󰆍 ", "2: ", "3:󰌽 ", "4: ", "5:󰊠 " }
 awful.layout.layouts = {
   awful.layout.suit.spiral,
   --awful.layout.suit.spiral.dwindle,
@@ -572,6 +571,9 @@ globalkeys = mytable.join(
   -- awful.key({ modkey }, "v", function()
   --   awful.spawn.with_shell "xsel -b | xsel"
   -- end, { description = "copy gtk to terminal", group = "hotkeys" }),
+  awful.key({ modkey }, "v", function()
+    awful.spawn.with_shell "copyq toggle"
+  end, { description = "copyq", group = "hotkeys" }),
 
   -- User programs
   -- awful.key({ modkey }, "q", function () awful.spawn(browser) end,
@@ -594,8 +596,11 @@ globalkeys = mytable.join(
     --]]
   -- Prompt
   awful.key({ modkey }, "r", function()
-    -- awful.screen.focused().mypromptbox:run()
     os.execute "rofi -show run"
+  end, { description = "run prompt", group = "launcher" }),
+
+  awful.key({ modkey }, "w", function()
+    os.execute "rofi -show window"
   end, { description = "run prompt", group = "launcher" }),
 
   awful.key({ modkey }, "x", function()
