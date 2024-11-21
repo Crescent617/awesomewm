@@ -15,34 +15,38 @@ local os = os
 -- local my_table = awful.util.table or gears.table -- 4.{0,1} compatibility
 
 local theme = {}
-theme.confdir = os.getenv "HOME" .. "/.config/awesome/themes/multicolor"
+theme.confdir = os.getenv "HOME" .. "/.config/awesome/themes/custom"
 theme.wallpaper = os.getenv "MY_WALLPAPER" or theme.confdir .. "/wall.jpg"
-theme.font = "Monospace 11"
+theme.font = "Ubuntu Mono 12"
 
-local focus_fg = "#59e269"
+-- local focus_border = "#59e269"
+local focus_border = "#0090ed"
+local focus_bg = "#0090dd"
+local bg_normal = "#222222AA"
+local fg_normal = "#ffffff"
 
 -- Menu
-theme.menu_bg_normal = "#000000AA"
-theme.menu_bg_focus = "#000000AA"
+theme.menu_bg_normal = bg_normal
+theme.menu_bg_focus = bg_normal
 theme.menu_border_width = 0
 theme.menu_width = dpi(130)
-theme.menu_fg_normal = "#aaaaaa"
-theme.menu_fg_focus = focus_fg
-theme.menu_bg_normal = "#050505dd"
-theme.menu_bg_focus = "#050505dd"
+theme.menu_fg_normal = fg_normal
+theme.menu_fg_focus = focus_border
+theme.menu_bg_normal = bg_normal
+theme.menu_bg_focus = bg_normal
 
 -- Background
-theme.bg_normal = "#1f2430"
+theme.bg_normal = bg_normal
 theme.bg_dark = "#000000"
-theme.bg_focus = "#151821"
+theme.bg_focus = bg_normal
 theme.bg_urgent = "#ed8274"
-theme.bg_minimize = "#444444"
+theme.bg_minimize = "#444444f0"
 
 -- Foreground
 theme.fg_normal = "#ffffff"
-theme.fg_focus = focus_fg
+theme.fg_focus = fg_normal
 theme.fg_urgent = "#ffffff"
-theme.fg_minimize = "#ffffff"
+theme.fg_minimize = fg_normal
 
 -- Window Gap Distance
 theme.useless_gap = dpi(12)
@@ -52,26 +56,25 @@ theme.gap_single_client = true
 
 -- Window Borders
 theme.border_width = dpi(2)
-theme.border_normal = "#1c2022"
-theme.border_focus = focus_fg
+theme.border_normal = bg_normal
+theme.border_focus = focus_border
 theme.border_marked = "#d166ff"
 
 -- Taglist
 theme.taglist_bg_empty = theme.bg_normal
 theme.taglist_bg_occupied = "#ffffff1a"
 theme.taglist_bg_urgent = "#e91e6399"
-theme.taglist_bg_focus = theme.bg_focus
+theme.taglist_bg_focus = focus_bg
 
 -- Tasklist
 theme.tasklist_font = theme.font
 
-theme.tasklist_bg_normal = theme.bg_normal
-theme.tasklist_bg_focus = theme.bg_focus
-theme.tasklist_bg_urgent = theme.bg_urgent
-
-theme.tasklist_fg_focus = theme.fg_focus
+theme.tasklist_fg_normal = "#000000"
+theme.tasklist_bg_normal = "#ffffffaa"
+theme.tasklist_fg_focus = "#000000"
+theme.tasklist_bg_focus = "#ffffffdd"
 theme.tasklist_fg_urgent = theme.fg_urgent
-theme.tasklist_fg_normal = theme.fg_normal
+theme.tasklist_bg_urgent = theme.bg_urgent
 
 -- Panel Sizing
 theme.left_panel_width = dpi(55)
@@ -81,6 +84,7 @@ theme.top_panel_height = dpi(26)
 theme.notification_width = dpi(500)
 theme.notification_height = dpi(125)
 theme.notification_icon_size = dpi(125)
+
 -- round corners
 theme.notification_shape = function(cr, width, height)
   gears.shape.rounded_rect(cr, width, height, dpi(10))
@@ -95,8 +99,8 @@ theme.systray_icon_spacing = dpi(5)
 
 -- theme.tasklist_plain_task_name = false
 -- theme.tasklist_disable_icon = false
+-- theme.tasklist_disable_task_name = true
 
-theme.useless_gap = dpi(17)
 theme.layout_tile = theme.confdir .. "/icons/tile.png"
 theme.layout_tilegaps = theme.confdir .. "/icons/tilegaps.png"
 theme.layout_tileleft = theme.confdir .. "/icons/tileleft.png"
@@ -135,7 +139,7 @@ local markup = lain.util.markup
 
 -- Textclock
 os.setlocale(os.getenv "LANG") -- to localize the clock
-local mytextclock = wibox.widget.textclock(markup("#a7aaff", "%Y-%m-%d ") .. markup(focus_fg, "%H:%M "))
+local mytextclock = wibox.widget.textclock(markup(fg_normal, " %Y-%m-%d ") .. markup(fg_normal, "%H:%M "))
 mytextclock.font = theme.font
 
 -- Calendar
@@ -154,8 +158,6 @@ local cpu = lain.widget.cpu {
     widget:set_markup(markup.fontfg(theme.font, "#ffffff", "󰍛 " .. cpu_now.usage .. "% "))
   end,
 }
-
-local fs_widget = require "awesome-wm-widgets.fs-widget.fs-widget"
 
 local volume_widget = require "awesome-wm-widgets.volume-widget.volume"
 
@@ -211,13 +213,44 @@ function theme.at_screen_connect(s)
   s.mylayoutbox = awful.widget.layoutbox(s)
 
   -- Create a taglist widget
-  s.mytaglist = awful.widget.taglist(s, awful.widget.taglist.filter.all, awful.util.taglist_buttons)
+  local function list_update(w, buttons, label, data, objects)
+    -- call default widget drawing function
+    local common = require "awful.widget.common"
+    common.list_update(w, buttons, label, data, objects)
+    -- set widget size
+    w:set_max_widget_size(dpi(150))
+  end
+
+  s.mytaglist = awful.widget.taglist {
+    screen = s,
+    filter = awful.widget.taglist.filter.all,
+    buttons = awful.util.taglist_buttons,
+    style = {
+      shape = gears.shape.rounded_bar,
+    },
+    layout = {
+      layout = wibox.layout.flex.horizontal,
+    },
+  }
 
   -- Create a tasklist widget
-  s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, awful.util.tasklist_buttons)
+  s.mytasklist = awful.widget.tasklist {
+    screen = s,
+    filter = awful.widget.tasklist.filter.currenttags,
+    buttons = awful.util.tasklist_buttons,
+    update_function = list_update,
+    style = {
+      shape = gears.shape.rounded_rect,
+    },
+    layout = {
+      spacing = 10,
+      layout = wibox.layout.flex.horizontal,
+    },
+  }
 
   -- Create the wibox
-  s.mywibox = awful.wibar { position = "top", screen = s, height = dpi(22), bg = theme.bg_normal, fg = theme.fg_normal }
+  s.mywibox =
+    awful.wibar { position = "bottom", screen = s, height = dpi(22), bg = theme.bg_normal, fg = theme.fg_normal }
 
   -- Add widgets to the wibox
   s.mywibox:setup {

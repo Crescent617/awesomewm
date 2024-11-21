@@ -24,9 +24,9 @@ local volume_widget = require "awesome-wm-widgets.volume-widget.volume"
 
 -- }}}
 -- {{{ Notification
-naughty.config.defaults.position = "top_middle"
+-- naughty.config.defaults.position = "top_middle"
 naughty.config.defaults.border_width = 2
-naughty.config.defaults.timeout = 10
+naughty.config.defaults.timeout = 5
 -- }}}
 
 -- {{{ Error handling
@@ -117,7 +117,7 @@ local launcher = "rofi -show drun"
 -- local launcher = "dmenu_run -i -fn Monospace -p 'Open '"
 
 awful.util.terminal = terminal
-awful.util.tagnames = { "1:󰆍 ", "2: ", "3:󰌽 ", "4: ", "5:󰊠 " }
+awful.util.tagnames = { "1-󰆍 ", "2- ", "3-󰌽 ", "4- ", "5-󰊠 " }
 awful.layout.layouts = {
   awful.layout.suit.spiral,
   --awful.layout.suit.spiral.dwindle,
@@ -127,7 +127,7 @@ awful.layout.layouts = {
   -- awful.layout.suit.tile.bottom,
   -- awful.layout.suit.tile.top,
   -- awful.layout.suit.fair,
-  awful.layout.suit.fair.horizontal,
+  -- awful.layout.suit.fair.horizontal,
   --awful.layout.suit.max,
   --awful.layout.suit.max.fullscreen,
   --awful.layout.suit.magnifier,
@@ -137,7 +137,7 @@ awful.layout.layouts = {
   --awful.layout.suit.corner.se,
   -- lain.layout.cascade,
   -- lain.layout.cascade.tile,
-  lain.layout.centerwork,
+  -- lain.layout.centerwork,
   --lain.layout.centerwork.horizontal,
   -- lain.layout.termfair,
   -- lain.layout.termfair.center
@@ -195,7 +195,7 @@ awful.util.tasklist_buttons = mytable.join(
   end)
 )
 
-beautiful.init(string.format("%s/.config/awesome/themes/multicolor/theme.lua", os.getenv "HOME"))
+beautiful.init(string.format("%s/.config/awesome/themes/custom/theme.lua", os.getenv "HOME"))
 
 -- }}}
 
@@ -330,10 +330,6 @@ globalkeys = mytable.join(
   awful.key({ altkey, "Control" }, "l", function()
     os.execute(scrlocker)
   end, { description = "lock screen", group = "hotkeys" }),
-
-  awful.key({ modkey }, "v", function()
-    awful.spawn "gpaste-client ui"
-  end, { description = "clipboard", group = "hotkeys" }),
 
   -- Show help
   awful.key({ modkey }, "/", hotkeys_popup.show_help, { description = "show help", group = "awesome" }),
@@ -776,11 +772,13 @@ awful.rules.rules = {
       -- and the name shown there might not match defined rules here.
       name = {
         "Event Tester", -- xev.
+        "飞书会议",
       },
       role = {
         "AlarmWindow", -- Thunderbird's calendar.
         "ConfigManager", -- Thunderbird's about:config.
         "pop-up", -- e.g. Google Chrome's (detached) Developer Tools.
+        "bubble",
       },
     },
     properties = { floating = true },
@@ -790,6 +788,15 @@ awful.rules.rules = {
   {
     rule_any = { type = { "normal", "dialog" } },
     properties = { titlebars_enabled = true },
+  },
+
+  -- hide titlebars
+  {
+    rule = {
+      name = "飞书会议",
+      class = "Meeting",
+    },
+    properties = { titlebars_enabled = false },
   },
   -- Set Firefox to always map on the tag named "2" on screen 1.
   -- { rule = { class = "Firefox" },
