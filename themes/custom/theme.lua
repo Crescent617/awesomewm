@@ -12,17 +12,28 @@ local wibox = require "wibox"
 local dpi = require("beautiful.xresources").apply_dpi
 
 local os = os
--- local my_table = awful.util.table or gears.table -- 4.{0,1} compatibility
 
 local theme = {}
-theme.confdir = os.getenv "HOME" .. "/.config/awesome/themes/custom"
-theme.wallpaper = os.getenv "MY_WALLPAPER" or theme.confdir .. "/wall.jpg"
+theme.confdir = os.getenv "HOME" .. "/.config/awesome/themes/powerarrow"
+theme.wallpaper = os.getenv "HOME" .. "/.config/awesome/themes/custom/wall.png"
 theme.font = "Ubuntu Mono 12"
 
+local dracula_background = "#282a36"
+local dracula_current_line = "#44475a"
+local dracula_selection = "#44475a"
+local dracula_foreground = "#f8f8f2"
+local dracula_comment = "#6272a4"
+local dracula_cyan = "#8be9fd"
+local dracula_green = "#50fa7b"
+local dracula_orange = "#ffb86c"
+local dracula_pink = "#ff79c6"
+local dracula_purple = "#bd93f9"
+local dracula_red = "#ff5555"
+local dracula_yellow = "#f1fa8c"
+
 -- local focus_border = "#59e269"
-local focus_border = "#0090ed"
-local focus_bg = "#0090dd"
-local bg_normal = "#222222AA"
+local focus_border = dracula_cyan
+local bg_normal = dracula_background .. "f0"
 local fg_normal = "#ffffff"
 
 -- Menu
@@ -39,8 +50,8 @@ theme.menu_bg_focus = bg_normal
 theme.bg_normal = bg_normal
 theme.bg_dark = "#000000"
 theme.bg_focus = bg_normal
-theme.bg_urgent = "#ed8274"
-theme.bg_minimize = "#444444f0"
+theme.bg_urgent = dracula_red
+theme.bg_minimize = bg_normal
 
 -- Foreground
 theme.fg_normal = "#ffffff"
@@ -62,23 +73,26 @@ theme.border_marked = "#d166ff"
 
 -- Taglist
 theme.taglist_bg_empty = theme.bg_normal
-theme.taglist_bg_occupied = "#ffffff1a"
-theme.taglist_bg_urgent = "#e91e6399"
-theme.taglist_bg_focus = focus_bg
+theme.taglist_bg_occupied = "#6666669a"
+theme.taglist_bg_urgent = dracula_red .. "f0"
+theme.taglist_bg_focus = "#ffffffe0"
+theme.taglist_fg_focus = "#000000"
 
 -- Tasklist
 theme.tasklist_font = theme.font
 
-theme.tasklist_fg_normal = "#000000"
-theme.tasklist_bg_normal = "#ffffffaa"
-theme.tasklist_fg_focus = "#000000"
-theme.tasklist_bg_focus = "#ffffffdd"
+theme.tasklist_fg_normal = "#ffffff"
+theme.tasklist_bg_normal = "#505070"
+-- theme.tasklist_fg_focus = "#000000"
+-- theme.tasklist_bg_focus = "#ffffffdd"
+theme.tasklist_fg_focus = "#ffffff"
+theme.tasklist_bg_focus = "#505070"
 theme.tasklist_fg_urgent = theme.fg_urgent
 theme.tasklist_bg_urgent = theme.bg_urgent
 
 -- Panel Sizing
 theme.left_panel_width = dpi(55)
-theme.top_panel_height = dpi(26)
+theme.top_panel_height = dpi(30)
 
 -- Notification Sizing
 theme.notification_width = dpi(500)
@@ -89,9 +103,10 @@ theme.notification_icon_size = dpi(125)
 theme.notification_shape = function(cr, width, height)
   gears.shape.rounded_rect(cr, width, height, dpi(10))
 end
+
 -- opacity
-theme.notification_opacity = 0.9
-theme.notification_border_color = theme.border_marked
+theme.notification_opacity = 0.95
+theme.notification_border_color = fg_normal
 
 -- System Tray
 theme.bg_systray = theme.bg_normal
@@ -165,6 +180,39 @@ local volume_widget = require "awesome-wm-widgets.volume-widget.volume"
 local memory = lain.widget.mem {
   settings = function()
     widget:set_markup(markup.fontfg(theme.font, "#ffffff", " " .. mem_now.perc .. "% "))
+  end,
+}
+
+local temp = lain.widget.temp {
+  settings = function()
+    widget:set_markup(markup.font(theme.font, coretemp_now .. "°C "))
+  end,
+}
+
+local smart_netspeed = function(byte_num)
+  local byte_num = tonumber(byte_num)
+  if byte_num < 1024 then
+    return string.format("%.1fB", byte_num)
+  elseif byte_num < 1024 * 1024 then
+    return string.format("%.1fKB", byte_num / 1024)
+  elseif byte_num < 1024 * 1024 * 1024 then
+    return string.format("%.1fMB", byte_num / 1024 / 1024)
+  else
+    return string.format("%.1fGB", byte_num / 1024 / 1024 / 1024)
+  end
+end
+
+local net = lain.widget.net {
+  settings = function()
+    widget:set_markup(
+      markup.font(
+        theme.font,
+        markup(dracula_cyan, "  " .. smart_netspeed(net_now.received))
+          .. " "
+          .. markup(dracula_green, "  " .. smart_netspeed(net_now.sent))
+          .. " "
+      )
+    )
   end,
 }
 
@@ -264,11 +312,13 @@ function theme.at_screen_connect(s)
     lr_margin_box(s.mytasklist, 5),
     { -- Right widgets
       layout = wibox.layout.fixed.horizontal,
-      margin_box(wibox.widget.systray(), 2),
-      lr_margin_box(volume_widget()),
+      net.widget,
       memory.widget,
       cpu.widget,
+      temp.widget,
       -- fs_widget(),
+      lr_margin_box(volume_widget()),
+      margin_box(wibox.widget.systray(), 2),
       mytextclock,
       require "awesome-wm-widgets.logout-menu-widget.logout-menu" {
         onlock = function()

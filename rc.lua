@@ -25,6 +25,7 @@ local volume_widget = require "awesome-wm-widgets.volume-widget.volume"
 -- }}}
 -- {{{ Notification
 -- naughty.config.defaults.position = "top_middle"
+naughty.config.defaults.position = "bottom_right"
 naughty.config.defaults.border_width = 2
 naughty.config.defaults.timeout = 5
 -- }}}
@@ -882,6 +883,7 @@ client.connect_signal("request::titlebars", function(c)
   end
 end)
 
+-- Auto hide titlebar
 client.connect_signal("property::floating", function(c)
   if c.floating then
     awful.titlebar.show(c)
