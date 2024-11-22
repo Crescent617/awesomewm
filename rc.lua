@@ -25,7 +25,7 @@ local volume_widget = require "awesome-wm-widgets.volume-widget.volume"
 -- }}}
 -- {{{ Notification
 -- naughty.config.defaults.position = "top_middle"
-naughty.config.defaults.position = "bottom_right"
+-- naughty.config.defaults.position = "bottom_right"
 naughty.config.defaults.border_width = 2
 naughty.config.defaults.timeout = 5
 -- }}}
@@ -118,7 +118,7 @@ local launcher = "rofi -show drun"
 -- local launcher = "dmenu_run -i -fn Monospace -p 'Open '"
 
 awful.util.terminal = terminal
-awful.util.tagnames = { "1-󰆍 ", "2- ", "3-󰌽 ", "4- ", "5-󰊠 " }
+awful.util.tagnames = { "1-󰆍 ", "2- ", "3-󰌽 ", "4-󰊠 ", "5- " }
 awful.layout.layouts = {
   awful.layout.suit.spiral,
   --awful.layout.suit.spiral.dwindle,
@@ -617,23 +617,30 @@ clientkeys = mytable.join(
   --   c.fullscreen = not c.fullscreen
   --   c:raise()
   -- end, { description = "toggle fullscreen", group = "client" }),
+
   awful.key({ modkey }, "q", function(c)
     c:kill()
   end, { description = "close", group = "client" }),
+
   awful.key({ modkey }, "f", awful.client.floating.toggle, { description = "toggle floating", group = "client" }),
+
   awful.key({ modkey, "Shift" }, "Return", function(c)
     c:swap(awful.client.getmaster())
   end, { description = "move to master", group = "client" }),
+
   awful.key({ modkey }, "o", function(c)
     c:move_to_screen()
   end, { description = "move to screen", group = "client" }),
+
   awful.key({ modkey }, "t", function(c)
     c.ontop = not c.ontop
   end, { description = "toggle keep on top", group = "client" }),
+
   awful.key({ modkey }, "s", function(c)
     -- sticky
     c.sticky = not c.sticky
   end, { description = "toggle keep on top", group = "client" }),
+
   awful.key({ modkey }, "n", function(c)
     -- The client currently has the input focus, so it cannot be
     -- minimized, since minimized clients can't have the focus.
@@ -652,10 +659,12 @@ clientkeys = mytable.join(
     c.maximized = not c.maximized
     c:raise()
   end, { description = "(un)maximize", group = "client" }),
+
   awful.key({ modkey, "Control" }, "m", function(c)
     c.maximized_vertical = not c.maximized_vertical
     c:raise()
   end, { description = "(un)maximize vertically", group = "client" }),
+
   awful.key({ modkey, "Shift" }, "m", function(c)
     c.maximized_horizontal = not c.maximized_horizontal
     c:raise()
@@ -744,7 +753,7 @@ awful.rules.rules = {
       size_hints_honor = false,
     },
   },
-  { rule_any = { class = { "x-terminal-emulator", "kitty" } }, properties = { opacity = 0.95 } },
+  -- { rule_any = { class = { "x-terminal-emulator", "kitty" } }, properties = { opacity = 0.95 } },
   -- Floating clients.
   {
     rule_any = {
@@ -853,7 +862,7 @@ client.connect_signal("request::titlebars", function(c)
     end)
   )
 
-  awful.titlebar(c, { size = 30 }):setup {
+  awful.titlebar(c, { size = 35 }):setup {
     { -- Left
       awful.titlebar.widget.iconwidget(c),
       buttons = buttons,
