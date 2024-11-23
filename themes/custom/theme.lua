@@ -30,8 +30,8 @@ local dracula_purple = "#bd93f9"
 local dracula_red = "#ff5555"
 local dracula_yellow = "#f1fa8c"
 
-local mac_titlebar_dark_bg = "#45494c"
-local mac_titlebar_dark_fg = "#d7dbde"
+local bg_dimmed = "#45494c" -- mac os titlebar background color
+local fg_dimmed = "#d7dbde" -- mac os titlebar text color
 
 local focus_border = dracula_comment
 local bg_normal = dracula_background
@@ -58,11 +58,11 @@ theme.bg_minimize = bg_normal
 theme.fg_normal = "#ffffff"
 theme.fg_focus = fg_normal
 theme.fg_urgent = "#ffffff"
-theme.fg_minimize = fg_normal
+theme.fg_minimize = fg_dimmed
 
 -- Titlebars
 theme.titlebar_bg = bg_normal
-theme.titlebar_fg = mac_titlebar_dark_fg
+theme.titlebar_fg = fg_dimmed
 
 -- Hotkeys
 theme.hotkeys_modifiers_fg = dracula_purple
@@ -86,13 +86,14 @@ theme.taglist_spacing = dpi(5)
 theme.taglist_bg_empty = theme.bg_normal
 theme.taglist_bg_occupied = "#6666669a"
 theme.taglist_bg_urgent = dracula_red .. "f0"
-theme.taglist_bg_focus = "#ffffffe0"
+theme.taglist_bg_focus = fg_dimmed
 theme.taglist_fg_focus = "#000000"
+theme.taglist_fg = fg_dimmed
 
 -- Tasklist
 theme.tasklist_font = theme.font
 
-theme.tasklist_fg_normal = fg_normal
+theme.tasklist_fg_normal = fg_dimmed
 theme.tasklist_bg_normal = "#505060"
 -- theme.tasklist_fg_focus = "#000000"
 -- theme.tasklist_bg_focus = "#ffffffdd"
@@ -100,8 +101,8 @@ theme.tasklist_fg_focus = fg_normal
 theme.tasklist_bg_focus = "#505060"
 theme.tasklist_fg_urgent = theme.fg_urgent
 theme.tasklist_bg_urgent = theme.bg_urgent
-theme.tasklist_shape_border_color_focus = fg_normal .. "AA"
-theme.tasklist_shape_border_width_focus = 1
+theme.tasklist_shape_border_color_focus = fg_dimmed .. "AA"
+theme.tasklist_shape_border_width_focus = 2
 
 -- Panel Sizing
 theme.left_panel_width = dpi(55)
@@ -188,10 +189,10 @@ local function pct2color(pct, pallet)
   if not pallet then
     pallet = {
       dracula_comment,
-      -- dracula_foreground,
-      dracula_cyan,
+      fg_dimmed,
       dracula_yellow,
       dracula_orange,
+      -- dracula_pink,
       dracula_red,
     }
   end
@@ -257,8 +258,8 @@ local net = lain.widget.net {
     local max_speed = 5 * 1024 -- 5MB/s
     local pallet = {
       dracula_comment,
+      fg_dimmed,
       dracula_purple,
-      dracula_foreground,
       dracula_cyan,
       dracula_green,
     }
