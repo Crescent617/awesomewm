@@ -19,7 +19,6 @@ theme.wallpaper = os.getenv "HOME" .. "/.config/awesome/themes/custom/wall.jpg"
 theme.font = "Ubuntu Mono 12"
 
 local dracula_background = "#282a36"
-local dracula_current_line = "#44475a"
 local dracula_selection = "#44475a"
 local dracula_foreground = "#f8f8f2"
 local dracula_comment = "#6272a4"
@@ -30,6 +29,9 @@ local dracula_pink = "#ff79c6"
 local dracula_purple = "#bd93f9"
 local dracula_red = "#ff5555"
 local dracula_yellow = "#f1fa8c"
+
+local mac_titlebar_dark_bg = "#45494c"
+local mac_titlebar_dark_fg = "#d7dbde"
 
 local focus_border = dracula_comment
 local bg_normal = dracula_background
@@ -57,6 +59,15 @@ theme.fg_normal = "#ffffff"
 theme.fg_focus = fg_normal
 theme.fg_urgent = "#ffffff"
 theme.fg_minimize = fg_normal
+
+-- Titlebars
+theme.titlebar_bg = bg_normal
+theme.titlebar_fg = mac_titlebar_dark_fg
+
+-- Hotkeys
+theme.hotkeys_modifiers_fg = dracula_purple
+-- theme.hotkeys_bg = bg_normal .. "aa"
+-- theme.hotkeys_font = theme.font
 
 -- Window Gap Distance
 theme.useless_gap = dpi(12)
@@ -107,7 +118,7 @@ theme.notification_shape = function(cr, width, height)
 end
 
 -- opacity
-theme.notification_opacity = 0.95
+-- theme.notification_opacity = 0.95
 theme.notification_border_color = dracula_selection
 
 -- System Tray
