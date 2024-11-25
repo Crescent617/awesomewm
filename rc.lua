@@ -86,14 +86,18 @@ local function run_once(cmd)
   end)
 end
 
+-- Display Composer
 run_once "picom -b --log-file /tmp/picom.log --log-level warn"
+-- Input Method
+run_once "fcitx5 -d"
 
 -- This function implements the XDG autostart specification
 awful.spawn.with_shell(
   'if (xrdb -query | grep -q "^awesome\\.started:\\s*true$"); then exit; fi;'
-    .. 'xrdb -merge <<< "awesome.started:true";'
-    -- list each of your autostart commands, followed by ; inside single quotes, followed by ..
-    .. 'dex --environment Awesome --autostart --search-paths "$XDG_CONFIG_DIRS/autostart:${XDG_CONFIG_HOME:-$HOME/.config}/autostart"' -- https://github.com/jceb/dex
+  .. 'xrdb -merge <<< "awesome.started:true";'
+  -- list each of your autostart commands, followed by ; inside single quotes, followed by ..
+  ..
+  'dex --environment Awesome --autostart --search-paths "$XDG_CONFIG_DIRS/autostart:${XDG_CONFIG_HOME:-$HOME/.config}/autostart"' -- https://github.com/jceb/dex
 )
 
 -- Change keymaps
@@ -109,7 +113,7 @@ local modkey = "Mod4"
 local altkey = "Mod1"
 -- local terminal = "gnome-terminal"
 local terminal = "kitty"
-local vi_focus = false -- vi-like client focus https://github.com/lcpz/awesome-copycats/issues/275
+local vi_focus = false  -- vi-like client focus https://github.com/lcpz/awesome-copycats/issues/275
 local cycle_prev = true -- cycle with only the previously focused client or all https://github.com/lcpz/awesome-copycats/issues/274
 local editor = os.getenv "EDITOR" or "nvim"
 -- local browser = "librewolf"
@@ -226,9 +230,9 @@ local myawesomemenu = {
       hotkeys_popup.show_help(nil, awful.screen.focused())
     end,
   },
-  { "Manual", string.format("%s -e man awesome", terminal) },
+  { "Manual",      string.format("%s -e man awesome", terminal) },
   { "Edit config", string.format("%s -e %s %s", terminal, editor, awesome.conffile) },
-  { "Restart", awesome.restart },
+  { "Restart",     awesome.restart },
   {
     "Quit",
     function()
@@ -317,7 +321,7 @@ root.buttons(mytable.join(
 -- {{{ Key bindings
 
 globalkeys = mytable.join(
-  -- Destroy all notifications
+-- Destroy all notifications
   awful.key({ "Control", altkey }, "space", function()
     naughty.destroy_all_notifications()
   end, { description = "destroy all notifications", group = "hotkeys" }),
@@ -457,7 +461,7 @@ globalkeys = mytable.join(
   awful.key({ modkey }, "Return", function()
     awful.spawn(terminal)
   end, { description = "open a terminal", group = "launcher" }),
-  awful.key({ modkey, "Shift" }, "r", awesome.restart, { description = "reload awesome", group = "awesome" }),
+  awful.key({ modkey, "Control" }, "r", awesome.restart, { description = "reload awesome", group = "awesome" }),
   awful.key({ modkey, "Shift" }, "q", awesome.quit, { description = "quit awesome", group = "awesome" }),
   awful.key({ modkey, altkey }, "l", function()
     awful.tag.incmwfact(0.05)
@@ -608,7 +612,7 @@ globalkeys = mytable.join(
       history_path = awful.util.get_cache_dir() .. "/history_eval",
     }
   end, { description = "lua execute prompt", group = "awesome" })
-  --]]
+--]]
 )
 
 clientkeys = mytable.join(
@@ -621,9 +625,7 @@ clientkeys = mytable.join(
   awful.key({ modkey }, "q", function(c)
     c:kill()
   end, { description = "close", group = "client" }),
-
   awful.key({ modkey }, "f", awful.client.floating.toggle, { description = "toggle floating", group = "client" }),
-
   awful.key({ modkey, "Shift" }, "Return", function(c)
     c:swap(awful.client.getmaster())
   end, { description = "move to master", group = "client" }),
@@ -758,7 +760,7 @@ awful.rules.rules = {
   {
     rule_any = {
       instance = {
-        "DTA", -- Firefox addon DownThemAll.
+        "DTA",   -- Firefox addon DownThemAll.
         "copyq", -- Includes session name in class.
         "pinentry",
       },
@@ -767,7 +769,7 @@ awful.rules.rules = {
         "Blueman-manager",
         "Gpick",
         "Kruler",
-        "MessageWin", -- kalarm.
+        "MessageWin",  -- kalarm.
         "Sxiv",
         "Tor Browser", -- Needs a fixed window size to avoid fingerprinting by screen size.
         "Wpa_gui",
@@ -783,11 +785,12 @@ awful.rules.rules = {
       name = {
         "Event Tester", -- xev.
         "飞书会议",
+        "Feishu Meetings",
       },
       role = {
-        "AlarmWindow", -- Thunderbird's calendar.
+        "AlarmWindow",   -- Thunderbird's calendar.
         "ConfigManager", -- Thunderbird's about:config.
-        "pop-up", -- e.g. Google Chrome's (detached) Developer Tools.
+        "pop-up",        -- e.g. Google Chrome's (detached) Developer Tools.
         "bubble",
       },
     },
@@ -868,7 +871,7 @@ client.connect_signal("request::titlebars", function(c)
       buttons = buttons,
       layout = wibox.layout.fixed.horizontal,
     },
-    { -- Middle
+    {   -- Middle
       { -- Title
         align = "center",
         widget = awful.titlebar.widget.titlewidget(c),

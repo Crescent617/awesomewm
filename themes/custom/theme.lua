@@ -16,7 +16,7 @@ local os = os
 local theme = {}
 theme.confdir = os.getenv "HOME" .. "/.config/awesome/themes/powerarrow"
 theme.wallpaper = os.getenv "HOME" .. "/.config/awesome/themes/custom/wall.jpg"
-theme.font = "Ubuntu Mono 12"
+theme.font = "CaskaydiaCove NF 12"
 
 local dracula_background = "#282a36"
 local dracula_selection = "#44475a"
@@ -51,13 +51,13 @@ theme.menu_bg_focus = bg_normal
 theme.bg_normal = bg_normal
 theme.bg_dark = "#000000"
 theme.bg_focus = bg_normal
-theme.bg_urgent = dracula_red
-theme.bg_minimize = bg_normal
+theme.bg_urgent = dracula_green
+theme.bg_minimize = dracula_selection
 
 -- Foreground
 theme.fg_normal = "#ffffff"
 theme.fg_focus = fg_normal
-theme.fg_urgent = "#ffffff"
+theme.fg_urgent = "#000000"
 theme.fg_minimize = fg_dimmed
 
 -- Titlebars
@@ -79,14 +79,14 @@ theme.gap_single_client = true
 theme.border_width = dpi(2)
 theme.border_normal = bg_normal
 theme.border_focus = focus_border
-theme.border_marked = dracula_pink
+theme.border_marked = dracula_purple
 
 -- Taglist
 theme.taglist_spacing = dpi(5)
 theme.taglist_bg_empty = theme.bg_normal
 theme.taglist_bg_occupied = "#6666669a"
-theme.taglist_bg_urgent = dracula_red .. "f0"
-theme.taglist_bg_focus = fg_dimmed
+theme.taglist_bg_urgent = theme.bg_urgent
+theme.taglist_bg_focus = "#ffffffe0"
 theme.taglist_fg_focus = "#000000"
 theme.taglist_fg = fg_dimmed
 
@@ -103,6 +103,8 @@ theme.tasklist_fg_urgent = theme.fg_urgent
 theme.tasklist_bg_urgent = theme.bg_urgent
 theme.tasklist_shape_border_color_focus = fg_dimmed .. "AA"
 theme.tasklist_shape_border_width_focus = 2
+theme.tasklist_shape_border_color_urgent = theme.bg_urgent
+theme.tasklist_shape_border_width_urgent = 2
 
 -- Panel Sizing
 theme.left_panel_width = dpi(55)
@@ -269,9 +271,9 @@ local net = lain.widget.net {
       markup.font(
         theme.font,
         markup(recv_fg, "  " .. smart_netspeed(net_now.received))
-          .. " "
-          .. markup(sent_fg, "  " .. smart_netspeed(net_now.sent))
-          .. " "
+        .. " "
+        .. markup(sent_fg, "  " .. smart_netspeed(net_now.sent))
+        .. " "
       )
     )
   end,
@@ -371,7 +373,7 @@ function theme.at_screen_connect(s)
       lr_margin_box(s.mypromptbox, 5),
     },
     s.mytasklist, -- Middle widget
-    { -- Right widgets
+    {             -- Right widgets
       layout = wibox.layout.fixed.horizontal,
       net.widget,
       memory.widget,
