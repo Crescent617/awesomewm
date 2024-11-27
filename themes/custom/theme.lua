@@ -99,8 +99,8 @@ theme.tasklist_bg_normal = "#505060"
 -- theme.tasklist_bg_focus = "#ffffffdd"
 theme.tasklist_fg_focus = fg_normal
 theme.tasklist_bg_focus = "#505060"
-theme.tasklist_fg_urgent = theme.fg_urgent
-theme.tasklist_bg_urgent = theme.bg_urgent
+theme.tasklist_fg_urgent = fg_dimmed
+theme.tasklist_bg_urgent = "#505060"
 theme.tasklist_shape_border_color_focus = fg_dimmed .. "AA"
 theme.tasklist_shape_border_width_focus = 2
 theme.tasklist_shape_border_color_urgent = theme.bg_urgent
@@ -187,6 +187,9 @@ mytextclock.font = theme.font
 --   },
 -- }
 
+-- Hide widgets if the percentage is less than this value
+local pct_hide_threshold = 5
+
 local function pct2color(pct, pallet)
   if not pallet then
     pallet = {
@@ -199,7 +202,7 @@ local function pct2color(pct, pallet)
     }
   end
   pct = tonumber(pct)
-  if pct < 8 then
+  if pct < 10 then
     return pallet[1]
   elseif pct < 25 then
     return pallet[2]
@@ -212,21 +215,43 @@ local function pct2color(pct, pallet)
   end
 end
 
+local sysload = lain.widget.sysload {
+  timeout = 5,
+  settings = function()
+    local cpunum = 12
+    local pct = tonumber(load_1 / cpunum * 100)
+    local fg = pct2color(pct)
+    if pct < pct_hide_threshold then
+      widget:set_markup("")
+      return
+    end
+    widget:set_markup(markup.fontfg(theme.font, fg, " " .. load_1 .. " "))
+  end,
+}
+
 local cpu = lain.widget.cpu {
   timeout = 5,
   settings = function()
     local fg = pct2color(cpu_now.usage)
+    local pct = tonumber(cpu_now.usage)
+    if pct < pct_hide_threshold then
+      widget:set_markup("")
+      return
+    end
     widget:set_markup(markup.fontfg(theme.font, fg, "󰍛 " .. cpu_now.usage .. "% "))
   end,
 }
-
-local volume_widget = require "awesome-wm-widgets.volume-widget.volume"
 
 local memory = lain.widget.mem {
   timeout = 5,
   settings = function()
     local fg = pct2color(mem_now.perc)
-    widget:set_markup(markup.fontfg(theme.font, fg, " " .. mem_now.perc .. "% "))
+    local pct = tonumber(mem_now.perc)
+    if pct < pct_hide_threshold then
+      widget:set_markup("")
+      return
+    end
+    widget:set_markup(markup.fontfg(theme.font, fg, " " .. pct .. "% "))
   end,
 }
 
@@ -235,8 +260,12 @@ local temp = lain.widget.temp {
   -- x86_pkg_temp
   tempfile = "/sys/devices/virtual/thermal/thermal_zone2/temp",
   settings = function()
-    local coretemp_pct = tonumber(coretemp_now - 30) / 50 * 100
-    local fg = pct2color(coretemp_pct)
+    local pct = tonumber(coretemp_now - 30) / 50 * 100
+    local fg = pct2color(pct)
+    if pct < pct_hide_threshold then
+      widget:set_markup("")
+      return
+    end
     widget:set_markup(markup.fontfg(theme.font, fg, "󱃃 " .. coretemp_now .. "°C "))
   end,
 }
@@ -255,7 +284,6 @@ local function smart_netspeed(kbs)
 end
 
 local net = lain.widget.net {
-  timeout = 5,
   settings = function()
     local max_speed = 5 * 1024 -- 5MB/s
     local pallet = {
@@ -265,17 +293,17 @@ local net = lain.widget.net {
       dracula_cyan,
       dracula_green,
     }
-    local recv_fg = pct2color(net_now.received / max_speed * 100, pallet)
-    local sent_fg = pct2color(net_now.sent / max_speed * 100, pallet)
-    widget:set_markup(
-      markup.font(
-        theme.font,
-        markup(recv_fg, "  " .. smart_netspeed(net_now.received))
-        .. " "
-        .. markup(sent_fg, "  " .. smart_netspeed(net_now.sent))
-        .. " "
-      )
-    )
+    local recv_pct = net_now.received / max_speed * 100
+    local sent_pct = net_now.sent / max_speed * 100
+    local recv_fg = pct2color(recv_pct, pallet)
+    local sent_fg = pct2color(sent_pct, pallet)
+
+    local m = ""
+    if recv_pct > pct_hide_threshold or sent_pct > pct_hide_threshold then
+      m = markup(recv_fg, "  " .. smart_netspeed(net_now.received)) ..
+          " " .. markup(sent_fg, "  " .. smart_netspeed(net_now.sent)) .. " "
+    end
+    widget:set_markup(markup.font(theme.font, m))
   end,
 }
 
@@ -302,6 +330,9 @@ local function margin_box(widget, margin)
     widget = wibox.container.margin,
   }
 end
+
+local volume_widget = require "awesome-wm-widgets.volume-widget.volume"
+-- local pacman_widget = require 'awesome-wm-widgets.pacman-widget.pacman'
 
 function theme.at_screen_connect(s)
   -- Quake application
@@ -376,8 +407,9 @@ function theme.at_screen_connect(s)
     {             -- Right widgets
       layout = wibox.layout.fixed.horizontal,
       net.widget,
-      memory.widget,
+      sysload.widget,
       cpu.widget,
+      memory.widget,
       temp.widget,
       lr_margin_box(volume_widget(), 3),
       wibox.widget.systray(),
