@@ -6,7 +6,6 @@
 --]]
 
 local gears = require "gears"
-local lain = require "lain"
 local awful = require "awful"
 local wibox = require "wibox"
 local dpi = require("beautiful.xresources").apply_dpi
@@ -170,142 +169,12 @@ theme.titlebar_maximized_button_focus_inactive = theme.confdir .. "/icons/titleb
 theme.titlebar_maximized_button_normal_active = theme.confdir .. "/icons/titlebar/maximized_normal_active.png"
 theme.titlebar_maximized_button_focus_active = theme.confdir .. "/icons/titlebar/maximized_focus_active.png"
 
-local markup = lain.util.markup
+local markup = require "myutil.markup"
 
 -- Textclock
 os.setlocale(os.getenv "LANG") -- to localize the clock
 local mytextclock = wibox.widget.textclock(markup(fg_normal, " %Y-%m-%d ") .. markup(fg_normal, "%H:%M "))
 mytextclock.font = theme.font
-
--- Calendar
--- theme.cal = lain.widget.cal {
---   attach_to = { mytextclock },
---   notification_preset = {
---     font = theme.font,
---     fg = theme.fg_normal,
---     bg = theme.bg_normal,
---   },
--- }
-
--- Hide widgets if the percentage is less than this value
-local pct_hide_threshold = 5
-
-local function pct2color(pct, pallet)
-  if not pallet then
-    pallet = {
-      dracula_comment,
-      fg_dimmed,
-      dracula_yellow,
-      dracula_orange,
-      -- dracula_pink,
-      dracula_red,
-    }
-  end
-  pct = tonumber(pct)
-  if pct < 10 then
-    return pallet[1]
-  elseif pct < 25 then
-    return pallet[2]
-  elseif pct < 50 then
-    return pallet[3]
-  elseif pct < 75 then
-    return pallet[4]
-  else
-    return pallet[5]
-  end
-end
-
-local sysload = lain.widget.sysload {
-  timeout = 5,
-  settings = function()
-    local cpunum = 12
-    local pct = tonumber(load_1 / cpunum * 100)
-    local fg = pct2color(pct)
-    if pct < pct_hide_threshold then
-      widget:set_markup("")
-      return
-    end
-    widget:set_markup(markup.fontfg(theme.font, fg, " " .. load_1 .. " "))
-  end,
-}
-
-local cpu = lain.widget.cpu {
-  timeout = 5,
-  settings = function()
-    local fg = pct2color(cpu_now.usage)
-    local pct = tonumber(cpu_now.usage)
-    if pct < pct_hide_threshold then
-      widget:set_markup("")
-      return
-    end
-    widget:set_markup(markup.fontfg(theme.font, fg, "󰍛 " .. cpu_now.usage .. "% "))
-  end,
-}
-
-local memory = lain.widget.mem {
-  timeout = 5,
-  settings = function()
-    local fg = pct2color(mem_now.perc)
-    local pct = tonumber(mem_now.perc)
-    if pct < pct_hide_threshold then
-      widget:set_markup("")
-      return
-    end
-    widget:set_markup(markup.fontfg(theme.font, fg, " " .. pct .. "% "))
-  end,
-}
-
-local temp = lain.widget.temp {
-  --   ❯ cat /sys/class/thermal/thermal_zone2/type
-  -- x86_pkg_temp
-  tempfile = "/sys/devices/virtual/thermal/thermal_zone2/temp",
-  settings = function()
-    local pct = tonumber(coretemp_now - 30) / 50 * 100
-    local fg = pct2color(pct)
-    if pct < pct_hide_threshold then
-      widget:set_markup("")
-      return
-    end
-    widget:set_markup(markup.fontfg(theme.font, fg, "󱃃 " .. coretemp_now .. "°C "))
-  end,
-}
-
-local function smart_netspeed(kbs)
-  local byte_num = tonumber(kbs) * 1024
-  -- if byte_num < 1024 then
-  --   return string.format("%.1fB", byte_num)
-  if byte_num < 1024 * 1024 then
-    return string.format("%.1fKB", byte_num / 1024)
-  elseif byte_num < 1024 * 1024 * 1024 then
-    return string.format("%.1fMB", byte_num / 1024 / 1024)
-  else
-    return string.format("%.1fGB", byte_num / 1024 / 1024 / 1024)
-  end
-end
-
-local net = lain.widget.net {
-  settings = function()
-    local max_speed = 5 * 1024 -- 5MB/s
-    local pallet = {
-      dracula_comment,
-      fg_dimmed,
-      dracula_purple,
-      dracula_cyan,
-      dracula_green,
-    }
-    local recv_pct = net_now.received / max_speed * 100
-    local sent_pct = net_now.sent / max_speed * 100
-    local recv_fg = pct2color(recv_pct, pallet)
-    local sent_fg = pct2color(sent_pct, pallet)
-
-    local m = ""
-    if recv_pct > pct_hide_threshold or sent_pct > pct_hide_threshold then
-      m = markup(recv_fg, "  " .. smart_netspeed(net_now.received)) ..
-          " " .. markup(sent_fg, "  " .. smart_netspeed(net_now.sent)) .. " "
-    end
-    widget:set_markup(markup.font(theme.font, m))
-  end,
-}
 
 -- Utils
 local function lr_margin_box(widget, margin)
@@ -320,24 +189,10 @@ local function lr_margin_box(widget, margin)
   }
 end
 
-local function margin_box(widget, margin)
-  if not margin then
-    margin = 2
-  end
-  return wibox.widget {
-    widget,
-    margins = dpi(margin),
-    widget = wibox.container.margin,
-  }
-end
-
 local volume_widget = require "awesome-wm-widgets.volume-widget.volume"
 -- local pacman_widget = require 'awesome-wm-widgets.pacman-widget.pacman'
 
 function theme.at_screen_connect(s)
-  -- Quake application
-  s.quake = lain.util.quake { app = awful.util.terminal }
-
   -- If wallpaper is a function, call it with the screen
   local wallpaper = theme.wallpaper
   if type(wallpaper) == "function" then
@@ -404,13 +259,8 @@ function theme.at_screen_connect(s)
       lr_margin_box(s.mypromptbox, 5),
     },
     s.mytasklist, -- Middle widget
-    {             -- Right widgets
+    { -- Right widgets
       layout = wibox.layout.fixed.horizontal,
-      net.widget,
-      sysload.widget,
-      cpu.widget,
-      memory.widget,
-      temp.widget,
       lr_margin_box(volume_widget(), 3),
       wibox.widget.systray(),
       mytextclock,
