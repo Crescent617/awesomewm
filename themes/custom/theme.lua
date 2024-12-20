@@ -1,19 +1,10 @@
---[[
-
-     Multicolor Awesome WM theme 2.0
-     github.com/lcpz
-
---]]
-
 local gears = require "gears"
 local awful = require "awful"
 local wibox = require "wibox"
 local dpi = require("beautiful.xresources").apply_dpi
 
-local os = os
-
 local theme = {}
-theme.confdir = os.getenv "HOME" .. "/.config/awesome/themes/powerarrow"
+theme.confdir = os.getenv "HOME" .. "/.config/awesome/themes/custom"
 theme.wallpaper = os.getenv "HOME" .. "/.config/awesome/themes/custom/wall.jpg"
 theme.font = "CaskaydiaCove NF 12"
 
@@ -185,6 +176,17 @@ local function lr_margin_box(widget, margin)
     widget,
     left = dpi(margin),
     right = dpi(margin),
+    widget = wibox.container.margin,
+  }
+end
+
+local function margin_box(widget, margin)
+  if not margin then
+    margin = 5
+  end
+  return wibox.widget {
+    widget,
+    margins = dpi(margin),
     widget = wibox.container.margin,
   }
 end
