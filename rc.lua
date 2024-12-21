@@ -117,7 +117,7 @@ local launcher = "rofi -show drun"
 -- local launcher = "dmenu_run -i -fn Monospace -p 'Open '"
 
 awful.util.terminal = terminal
-awful.util.tagnames = { "1-󰆍 ", "2- ", "3-󰌽 ", "4-󰊠 ", "5- " }
+awful.util.tagnames = { "1", "2", "3", "4", "5" }
 awful.layout.layouts = {
   awful.layout.suit.spiral,
   awful.layout.suit.floating,

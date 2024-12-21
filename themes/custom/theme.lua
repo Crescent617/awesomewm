@@ -6,7 +6,7 @@ local dpi = require("beautiful.xresources").apply_dpi
 local theme = {}
 theme.confdir = os.getenv "HOME" .. "/.config/awesome/themes/custom"
 theme.wallpaper = os.getenv "HOME" .. "/.config/awesome/themes/custom/wall.jpg"
-theme.font = "CaskaydiaCove NF 12"
+theme.font = "CaskaydiaCove Nerd Font 11"
 
 local dracula_background = "#282a36"
 local dracula_selection = "#44475a"
