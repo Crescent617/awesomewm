@@ -23,7 +23,7 @@ local dracula_yellow = "#f1fa8c"
 local bg_dimmed = "#45494c" -- mac os titlebar background color
 local fg_dimmed = "#d7dbde" -- mac os titlebar text color
 
-local focus_border = dracula_comment
+local focus_border = dracula_cyan
 local bg_normal = dracula_background
 local fg_normal = dracula_foreground
 
