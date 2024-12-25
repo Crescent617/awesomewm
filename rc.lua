@@ -84,7 +84,7 @@ local function run_once(cmd)
   end)
 end
 
--- Display Composer
+-- Display 
 run_once "picom -b --log-file /tmp/picom.log --log-level warn"
 -- Input Method
 run_once "fcitx5 -d"
@@ -98,7 +98,6 @@ awful.spawn.with_shell(
 )
 
 -- Change keymaps
-awful.spawn.with_shell "[ -f ~/.Xmodmap ] && xmodmap ~/.Xmodmap"
 awful.spawn.with_shell "[ -f ~/scripts/auto_change_color_scheme.sh ] && sh ~/scripts/auto_change_color_scheme.sh"
 -- }}}
 
@@ -401,11 +400,15 @@ local globalkeys = mytable.join(
 
   awful.key({ modkey }, "r", function()
     os.execute "rofi -show run"
-  end, { description = "run prompt", group = "launcher" }),
+  end, { description = "show launcher", group = "launcher" }),
 
   awful.key({ modkey }, "w", function()
     os.execute "rofi -show window"
-  end, { description = "run prompt", group = "launcher" }),
+  end, { description = "show window", group = "launcher" }),
+
+  awful.key({ modkey }, "c", function()
+    os.execute "rofi -show calc"
+  end, { description = "show calc", group = "launcher" }),
 
   awful.key({ modkey }, "x", function()
     awful.prompt.run {
